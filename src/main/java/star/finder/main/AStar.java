@@ -85,4 +85,22 @@ public class AStar {
 
         return new ArrayList<>();
     }
+
+    public List<Node> run(int[] pos1, int[] pos2, boolean[][] map) {
+        return this.run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
+                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 10000, false).makeList();
+    }
+
+    public List<Node> run(int[] pos1, int[] pos2, byte[] initMap, int mapSizeX, int mapSizeY) {
+        boolean[][] gridMap = new boolean[mapSizeX][mapSizeY];
+
+        for (int x = 0; x < mapSizeX; x++) {
+            for (int y = 0; y < mapSizeY; y++) {
+                int current =  (int) initMap[x * mapSizeX + y] & 0xFF;
+                gridMap[x][y] = current > 180;
+            }
+        }
+
+        return this.run(pos1, pos2, gridMap);
+    }
 }
