@@ -20,15 +20,14 @@ public class AStar {
 
     public Node run(Node start, Node end, boolean[][] obstacleGrid, int maxIter, boolean isMulti) {
         PriorityQueue<Node> openList = new PriorityQueue<>();
-        boolean[] isInOpenList = new boolean[obstacleGrid.length * obstacleGrid[0].length];
         boolean[] closedList = new boolean[obstacleGrid.length * obstacleGrid[0].length];
         int cur = 0;
 
         openList.add(start);
+        System.out.println(end.x + " | " + end.y);
 
         while (!openList.isEmpty() && cur < maxIter) {
             Node currentNode = openList.poll();
-            isInOpenList[currentNode.x * obstacleGrid[0].length + currentNode.y] = false;
 
             if (currentNode.x == end.x && currentNode.y == end.y) {
                 return currentNode;
@@ -38,17 +37,15 @@ public class AStar {
                 int newX = currentNode.x + direction[0];
                 int newY = currentNode.y + direction[1];
 
-                if (newX >= 0 && newX < obstacleGrid.length &&
-                        newY >= 0 && newY < obstacleGrid[0].length &&
-                        obstacleGrid[newX][newY] &&
-                        !closedList[newX * obstacleGrid[0].length + newY]) {
-
+                if (newY >= 0 && newY < obstacleGrid.length &&
+                        newX >= 0 && newX < obstacleGrid[newY].length &&
+                        obstacleGrid[newY][newX] &&
+                        !closedList[newY * obstacleGrid[newY].length + newX]) {
                     double newH = MathUtil.getDistance(currentNode, end)
                             + currentNode.getNonAirAround(3, 3, obstacleGrid);
                     double newAddR = MathUtil.getDistance(currentNode, start);
                     Node neighbor = new Node(newX, newY, currentNode, newAddR, newH);
                     openList.add(neighbor);
-                    isInOpenList[newX * obstacleGrid[0].length + newY] = true;
                 }
             }
 
@@ -56,6 +53,7 @@ public class AStar {
             cur++;
         }
 
+        System.out.println(cur);
         return null; // No path found
     }
 
@@ -87,8 +85,10 @@ public class AStar {
     }
 
     public List<Node> run(int[] pos1, int[] pos2, boolean[][] map) {
-        return this.run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
-                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 10000, false).makeList();
+        Node result = this.run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
+                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 50, false);
+
+        return result == null ? new ArrayList<>() : result.makeList();
     }
 
     public List<Node> run(int[] pos1, int[] pos2, byte[] initMap, int mapSizeX, int mapSizeY) {
@@ -102,5 +102,24 @@ public class AStar {
         }
 
         return this.run(pos1, pos2, gridMap);
+    }
+
+    public List<Node> shortenList(List<Node> original, boolean[][] gridBoard) {
+        List<Node> returnList = new ArrayList<>();
+        int i = 0;
+        int curCount = 0;
+        Node curMain = original.get(curCount);
+        while (i < original.size()) {
+            Node curTMP = original.get(i);
+
+            if (MathUtil.isObstacleBetweenBresenham(curMain, curTMP, gridBoard)) {
+                returnList.add(original.get(i - 1));
+                curMain = curTMP;
+            }
+
+            i++;
+        }
+
+        return returnList;
     }
 }

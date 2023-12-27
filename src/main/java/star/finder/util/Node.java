@@ -37,8 +37,11 @@ public class Node implements Comparable<Node> {
     }
 
     public boolean isOnGrid(boolean[][] obstacleGrid) {
-        return this.x >= 0 && this.x < obstacleGrid.length &&
-                this.y >= 0 && this.y < obstacleGrid[0].length;
+        return this.y >= 0 && this.y < obstacleGrid[this.y].length && this.x >= 0 && this.x < obstacleGrid.length;
+    }
+
+    public boolean isOnGrid(boolean[][] obstacleGrid, int x, int y) {
+        return y >= 0 && y < obstacleGrid.length && x >= 0 && x < obstacleGrid[y].length;
     }
 
     public List<Node> getNodesAround(int addX, int addY, boolean[][] grid) {
@@ -46,7 +49,7 @@ public class Node implements Comparable<Node> {
 
         for (int x = -addX; x < addX; ++x) {
             for (int y = -addY; y < addY; ++y) {
-                if ((this.y != y || this.x != x) && isOnGrid(grid)) nodes.add(new Node(this.x + x, this.y + y, this, 0, 0));
+                if ((this.y != y || this.x != x) && isOnGrid(grid, this.x + x, this.y + y) && x > 0 && y > 0) nodes.add(new Node(this.x + x, this.y + y, this, 0, 0));
             }
         }
 
@@ -57,12 +60,12 @@ public class Node implements Comparable<Node> {
         int amNonAir = 0;
 
         for (Node node : getNodesAround(addX, addY, grid)) {
-            if (!grid[node.x][node.y]) {
+            if (!grid[node.y][node.x]) {
                 amNonAir++;
             }
         }
 
-        return amNonAir;
+        return amNonAir * 5;
     }
 
     public List<Node> makeList() {
