@@ -65,7 +65,7 @@ public class Node implements Comparable<Node> {
             }
         }
 
-        return amNonAir * 5;
+        return amNonAir;
     }
 
     public List<Node> makeList() {

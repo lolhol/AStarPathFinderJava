@@ -24,7 +24,6 @@ public class AStar {
         int cur = 0;
 
         openList.add(start);
-        System.out.println(end.x + " | " + end.y);
 
         while (!openList.isEmpty() && cur < maxIter) {
             Node currentNode = openList.poll();
@@ -49,7 +48,7 @@ public class AStar {
                 }
             }
 
-            closedList[currentNode.x * obstacleGrid[0].length + currentNode.y] = true;
+            closedList[currentNode.y * obstacleGrid[currentNode.y].length + currentNode.x] = true;
             cur++;
         }
 
@@ -86,7 +85,7 @@ public class AStar {
 
     public List<Node> run(int[] pos1, int[] pos2, boolean[][] map) {
         Node result = this.run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
-                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 50, false);
+                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 1000, false);
 
         return result == null ? new ArrayList<>() : result.makeList();
     }

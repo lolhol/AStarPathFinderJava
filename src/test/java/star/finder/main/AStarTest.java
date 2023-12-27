@@ -35,8 +35,8 @@ class AStarTest {
     void testFinder() {
         boolean[][] pMap = parseMap();
 
-        List<Node> out = star.run(new int[]{1, 1}, new int[] {6, 5}, pMap);
-        printMapWithPath(out, map, new int[]{1, 1}, new int[] {6, 5});
+        List<Node> out = star.run(new int[]{1, 1}, new int[] {15, 5}, pMap);
+        printMapWithPath(out, map, new int[]{1, 1}, new int[] {15, 5});
     }
 
     private void printMapWithPath(List<Node> path, String[] map, int[] start, int[] end) {
