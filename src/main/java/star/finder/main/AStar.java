@@ -16,9 +16,21 @@ import java.util.concurrent.Future;
 public class AStar {
     // Possibly soon multithreading but idk
 
-    private final int[][] DIRECTIONS = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+    private int[][] DIRECTIONS = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
+    private int maxIter = 10000;
 
-    public Node run(Node start, Node end, boolean[][] obstacleGrid, int maxIter, boolean isMulti) {
+    /**
+     * This is an AStar Pathfinder meant for 2D
+     *
+     *
+     * @param start Start node (x, y, h cost.. etc)
+     * @param end end node
+     * @param obstacleGrid this is a boolean[][] map. True = open, False = closed.
+     * @param isMulti not used ATM.
+     * @return This will return a Null if no path is found of the head (end) node if path is found.
+     */
+
+    public Node run(Node start, Node end, boolean[][] obstacleGrid, boolean isMulti) {
         PriorityQueue<Node> openList = new PriorityQueue<>();
         boolean[] closedList = new boolean[obstacleGrid.length * obstacleGrid[0].length];
         int cur = 0;
@@ -56,6 +68,14 @@ public class AStar {
         return null; // No path found
     }
 
+    public void setDirections(int[][] newDirections) {
+        this.DIRECTIONS = newDirections;
+    }
+
+    public void setIter(int maxIter) {
+        this.maxIter = maxIter;
+    }
+
     public Node run(int[] pos1, int[] pos2, List<List<Integer>> nums, int maxIter) {
         boolean[][] booleanList = new boolean[nums.size()][nums.get(0).size()];
 
@@ -66,8 +86,10 @@ public class AStar {
             }
         }
 
+        this.setIter(maxIter);
+
         return run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
-                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), booleanList, maxIter, false);
+                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), booleanList, false);
     }
 
     public List<Node> run(int[] pos1, int[] pos2, List<List<Integer>> nums, boolean isList) {
@@ -85,7 +107,7 @@ public class AStar {
 
     public List<Node> run(int[] pos1, int[] pos2, boolean[][] map) {
         Node result = this.run(new Node(pos1[0], pos1[1], null, 0, MathUtil.getDistance(pos1, pos2)),
-                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, 1000, false);
+                new Node(pos2[0], pos2[1], null, MathUtil.getDistance(pos1, pos2), 0), map, false);
 
         return result == null ? new ArrayList<>() : result.makeList();
     }
